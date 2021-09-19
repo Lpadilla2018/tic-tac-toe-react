@@ -48,13 +48,15 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      history: [{ squares: Array(9).fill(null) }],
+      history: [{ squares: Array(9).fill(null), location: null }],
       stepNumber: 0,
       xIsNext: true,
     };
   }
 
   handleClick(i) {
+    const currentLocation = this.getLocation(i);
+
     // Capture state of array from beginning to current step
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
@@ -74,11 +76,28 @@ class Game extends React.Component {
       history: history.concat([
         {
           squares: squares,
+          location: currentLocation,
         },
       ]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
+  }
+
+  getLocation(index) {
+    const location = [
+      [1, 1],
+      [2, 1],
+      [3, 1],
+      [1, 2],
+      [2, 2],
+      [3, 2],
+      [1, 3],
+      [2, 3],
+      [3, 3],
+    ];
+
+    return location[index];
   }
 
   jumpTo(step) {
@@ -96,7 +115,10 @@ class Game extends React.Component {
 
     // move is also index of array
     const moves = history.map((step, move) => {
-      const desc = move ? `Go to move # ${move}` : 'Go to game start';
+      const location = history[move].location;
+      const desc = move
+        ? `Go to move # ${move}, Location: Column ${location[0]}, Row ${location[1]}`
+        : 'Go to game start';
 
       return (
         <li key={move}>
